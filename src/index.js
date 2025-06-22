@@ -4,10 +4,12 @@ import { DB_NAME } from "./db/constants.js";
 import express from"express";
 import connectDB from "./db/index.js";
 import dotenv from "dotenv";
+import { app } from "./app.js";
 dotenv.config({
      path: "./.env"
  });
 connectDB()
+
 
 .then(()=>{
     app.on("error",(error)=>{
@@ -18,7 +20,7 @@ connectDB()
     })
 })
 .catch((error)=>{
-    console.log("Mongo db connexted fail!!",error)
+    console.log("Mongo db connected fail!!",error)
 })
 
 // const app=express()
