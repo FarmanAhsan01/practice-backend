@@ -5,6 +5,7 @@ import { upload } from "../middlewares/multer.middleware.js";
 import { uploadOnCLoudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
+
 const registerUser=asyncHandler(async(req,res)=>{
      //get user details from frontend
      //validation - NOT EMPTY
@@ -34,7 +35,7 @@ const registerUser=asyncHandler(async(req,res)=>{
 
       //check if same user and email is access or not using models
 
-      User.findOne({
+      const existedUser=await User.findOne({
         $or:[{
           username
         },
@@ -47,17 +48,20 @@ const registerUser=asyncHandler(async(req,res)=>{
       }
      
       const avatarLocalPath=req.files?.avatar[0].path;
-       const coverLocalPath=req.files?.cvoverImage[0].path;
+       const coverLocalPath=req.files?.coverImage[0].path;
 
        if(!avatarLocalPath){
             throw new ApiError(400,"Avatar file is required")
        }
+      //  console.log("File Recieve",avatarLocalPath);
 
       const avatar=await uploadOnCLoudinary(avatarLocalPath)
       const coverImage=await uploadOnCLoudinary(coverLocalPath)
 
+      // console.log("FILES RECEIVED >>> ", avatar);
+
       if(!avatar){
-        throw new ApiError(400,"Avatar file is required")
+        throw new ApiError(400,"Avatar File is required")
       }
       const user= await User.create({
         fullName,
@@ -78,7 +82,7 @@ const registerUser=asyncHandler(async(req,res)=>{
       throw new ApiError(500,"something went wrong while registering the user")
      }
 
-     return res.status(201).jason(
+     return res.status(201).json(
       new ApiResponse(200,createdUser,"User registerd Successfully")
      )
 })
