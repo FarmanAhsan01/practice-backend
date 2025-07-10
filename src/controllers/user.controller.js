@@ -243,16 +243,16 @@ const refrehAccessToken= asyncHandler(async(req,res)=>{
 
 
 const changeCurrentPassword=asyncHandler(async(req,res)=>{
-  const {oldPassword,newPassword}= await req.body
+  const {password,newPassword}=  req.body
 
   //so we change the password it mean already login so it mean it auth middle middlewear where we asign req.user=user
  const user= await User.findById(req.user?._id)
- const isPasswordCorrect=await User.isPasswordCorrect(oldPassword)
+ const isPasswordCorrect=await user.isPasswordCorrect(password)
  if(!isPasswordCorrect){
   throw new ApiError(400,"Invalid old password")
  }
  user.password=newPassword
- await user.save({ValidateBeforeSave:tfalse})
+ await user.save({validateBeforeSave:false})
 
  return res
  .status(200)

@@ -11,7 +11,7 @@ import { ApiError } from "../utils/ApiError.js";
             throw new ApiError(401,"Unauthorized request")
         }
 
-        console.log("token",token);
+        // console.log("token",token);
         
         
        const decodeToken = jwt.verify(token,process.env.ACCESS_TOKEN_SECRET)
