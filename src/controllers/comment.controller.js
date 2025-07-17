@@ -4,6 +4,7 @@ import {ApiResponse} from "../utils/ApiResponse"
 import { User } from "../models/user.models"
 import {Comment} from "../models/comment.models"
 import {Video} from "../models/video.models"
+import mongoose from "mongoose"
 
 
 const getVideoComments = asyncHandler(async (req, res) => {
@@ -15,9 +16,44 @@ const getVideoComments = asyncHandler(async (req, res) => {
         throw new ApiError(400,"video doesn't exist")
     }
 
-    await Comment.aggregatePaginate(
-       Comment.aggregate()
-    )
+   const aggregation  =await Comment.aggregate([
+         {
+            $match:{
+                video:new mongoose.Types.ObjectId(videoId)
+            }
+        },
+        {
+            $lookup:{
+                from:"users",
+                localField:"owner",
+                foreignField:"_id",
+                as:"owner"
+            }
+        },
+        {
+            $unwind:"owner"
+        },
+        {
+            $project:{
+                content:1,
+                createdAt:1,
+                owner:{
+                    _id:1,
+                    username:1,
+                    fullName:1,
+                }
+            }
+        },
+   ] )
+   
+    options={
+        page: parseInt(page),
+        limit: parseInt(limit)
+    }
+    const getComments = await Comment.aggregatePaginate(aggregation, options);
+    return res
+    .status(200)
+    .json(new ApiResponse(200,getComments,"Video comments fetched successfully"))
     
 
 
