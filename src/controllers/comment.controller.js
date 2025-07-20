@@ -107,33 +107,31 @@ const updateComment = asyncHandler(async (req, res) => {
 })
 
 const deleteComment = asyncHandler(async (req, res) => {
-    // TODO: delete a comment
-    const {content}=req.body
-    const {commentId}=req.params
+  const { commentId } = req.params;
 
-    if(!content){
-        throw new ApiError(400,"Comment is required")
-    }
+  // 🔍 Validate input
+  if (!commentId) {
+    throw new ApiError(400, "Comment ID is required");
+  }
 
-   const deleteComment= await Comment.findOneAndDelete(
-        {
-            _id:commentId , content:content,owner:req.user._id
-        },
-        {
-            $unset:{
-                content:null
-            }
-        },
-        {new :true}
-    )
-    if(!deleteComment){
-        throw new ApiError(400,"Comment doesn't delete successfully")
-    }
-    
-    return res
+  const userId = req.user?._id;
+
+  // 🗑️ Delete the comment owned by the user
+  const deletedComment = await Comment.findOneAndDelete({
+    _id: commentId,
+    owner: userId,
+  });
+
+  // 🛑 If not found or already deleted
+  if (!deletedComment) {
+    throw new ApiError(404, "Comment not found or already deleted");
+  }
+
+  return res
     .status(200)
-    .json(new ApiResponse(200,deleteComment,"delete comment successfully"))
-})
+    .json(new ApiResponse(200, deletedComment, "Comment deleted successfully"));
+});
+
 
 export {
     getVideoComments, 
