@@ -231,5 +231,6 @@ export{
     getPlayListByID,
     removeVideoFromPlaylist,
     deletePlayList,
-    updatePlaylist
+    updatePlaylist,
+    getUserPlayLists
 }

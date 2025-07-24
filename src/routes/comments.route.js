@@ -7,7 +7,7 @@ import {
 } from "../controllers/comment.controller.js"
 
 
-import { verifyJWT } from "../middlewares/autho.middleware";
+import { verifyJWT } from "../middlewares/autho.middleware.js";
 
 const router=Router()
 

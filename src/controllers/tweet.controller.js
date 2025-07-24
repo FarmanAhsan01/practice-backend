@@ -90,8 +90,8 @@ const deleteTweet=asyncHandler(async(req,res)=>{
     const userId=req.user?._id
     const TweetDelete=await Tweet.findOneAndDelete(
         {
-              _id: TweetId,
-               owner: userId,
+            _id: TweetId,
+            owner: userId,
         }
         
     )
